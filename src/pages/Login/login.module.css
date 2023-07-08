@@ -1,0 +1,99 @@
+.login-container {
+  position: relative;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 100vh;
+  flex-wrap: wrap;
+  background-color: rgb(240, 240, 240);
+}
+
+.section-login-introduction h1 {
+  font-size: 5rem;
+  font-family: "Anton", sans-serif;
+}
+
+.section-login-introduction p {
+  margin-top: 0.5rem;
+  font-size: 2rem;
+  font-family: "Dancing Script", cursive;
+}
+
+.section-login-form {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: #fff;
+  box-shadow: 1px 1px 2px 1px #a5a2a2, -1px -1px 2px 1px #a5a2a2;
+  border-radius: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.group-button {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  width: 80%;
+}
+
+.group-button > label {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+}
+
+.group-button > input {
+  width: 100%;
+  height: 2.5rem;
+  border: 1px solid rgb(240, 240, 240);
+  border-radius: 5px;
+  padding-left: 10px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 600;
+}
+.group-button > input::placeholder {
+  color: rgb(153, 153, 149);
+  font-family: "Open Sans", sans-serif;
+}
+.submit-login-form {
+  width: 80%;
+}
+.login-button {
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  width: 100%;
+  font-size: 2rem;
+  background-color: rgb(153, 153, 149);
+  border: none;
+  border-radius: 5px;
+}
+
+.login-button:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.register-button {
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  font-size: 1.25rem;
+  background-color: rgb(153, 153, 149);
+  border: none;
+  border-radius: 5px;
+}
+.register-button:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.forgot-password {
+  margin-top: 10px;
+  text-decoration: underline;
+}
+
+.forgot-password:hover {
+  cursor: pointer;
+}

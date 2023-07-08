@@ -1,0 +1,95 @@
+.register-modal {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(222, 222, 222, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.register-modal-body {
+  position: relative;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: inset 1px 1px 0px 0px #b8b5b5, inset -1px -1px 0px 0px #b8b5b5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.form-register {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.register-modal-header {
+  margin-top: 20px;
+  font-size: 0.75rem;
+  font-weight: 400;
+  font-family: "Anton", sans-serif;
+}
+
+.close-register-modal {
+  padding: 5px;
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+
+.close-register-modal:hover {
+  cursor: pointer;
+  background: rgba(222, 222, 222, 0.5);
+  border-radius: 2px;
+}
+
+.group-button {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.group-button > label,
+.group-button > span {
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 10px;
+  margin-bottom: 5px;
+}
+
+.group-button > input {
+  height: 40px;
+  border-radius: 5px;
+  border: 1px solid rgb(240, 240, 240);
+  box-shadow: inset -1px -1px 0px 0px grey;
+}
+
+.date-of-birth {
+  display: flex;
+  justify-content: space-between;
+}
+.date-of-birth select {
+  width: 30%;
+  height: 25px;
+  border-radius: 4px;
+}
+
+.register-button {
+  margin-top: 10px;
+  height: 40px;
+  width: 40%;
+  background-color: #b8b5b5;
+  border: none;
+  border-radius: 5px;
+}
+
+.register-button:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
