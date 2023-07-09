@@ -1,7 +1,12 @@
-import Login from "./pages/Login";
+import Login from "./pages/login";
+import StoreProvider from "./store";
 
 function App() {
-  return <Login />;
+  return (
+    <StoreProvider>
+      <Login />
+    </StoreProvider>
+  );
 }
 
 export default App;
