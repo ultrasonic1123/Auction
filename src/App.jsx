@@ -1,10 +1,9 @@
-import Login from "./pages/login";
 import StoreProvider from "./store";
-
+import RouterProvider from "./router";
 function App() {
   return (
     <StoreProvider>
-      <Login />
+      <RouterProvider />
     </StoreProvider>
   );
 }

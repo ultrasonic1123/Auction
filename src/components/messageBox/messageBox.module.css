@@ -1,0 +1,21 @@
+.message-box {
+  position: absolute;
+  bottom: 10px;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-box-input {
+  padding: 10px 40px;
+  width: 85%;
+}
+
+.message-box-submit {
+  width: 10%;
+  margin-left: 10px;
+  border: 1px solid grey;
+  padding: 10px 5px;
+  border-radius: 2px;
+}

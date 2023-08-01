@@ -8,11 +8,11 @@ import {
 } from "../actions/user";
 
 const initialState = {
-  userName: "",
   firstName: "",
   lastName: "",
   phoneNumber: "",
   isLoading: false,
+  token: "",
 };
 
 const userReducer = (userState = initialState, action) => {
@@ -26,6 +26,7 @@ const userReducer = (userState = initialState, action) => {
       return {
         ...userState,
         isLoading: false,
+        ...action.userToken,
       };
     case USER_LOGIN_FAILED:
       return {

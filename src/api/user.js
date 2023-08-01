@@ -20,4 +20,8 @@ const userLoginRequest = async (userInfo) => {
   }
 };
 
+const userRegisterRequest = async (registerInfor) => {
+  console.log({ registerInfor });
+};
+
 export { userLoginRequest };

@@ -7,16 +7,14 @@ import {
 } from "../actions/user";
 
 function* userLoginSaga() {
-  console.log("USER_LOGIN saga");
   yield takeEvery(USER_LOGIN_REQUESTED, userLoginRequestSaga);
-  console.log("USER_LOGIN -- tata");
 }
 
 function* userLoginRequestSaga(action) {
-  console.log("USER_LOGIN_SAGA: ", action);
   try {
-    let usertoken = yield call(userLoginRequest, { userInfo: action.userData });
-    yield put({ type: USER_LOGIN_SUCCESSFUL, usertoken });
+    let userToken = yield call(userLoginRequest, { userInfo: action.userData });
+    console.log({ userToken });
+    yield put({ type: USER_LOGIN_SUCCESSFUL, userToken });
   } catch {
     yield put({ type: USER_LOGIN_FAILED });
   }

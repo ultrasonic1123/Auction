@@ -2,9 +2,10 @@ import React, { useCallback, useEffect } from "react";
 import styles from "./login.module.css";
 import { RegisterModal } from "../../components/Login/RegisterModal";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { USER_LOGIN_REQUESTED } from "../../redux/actions/user";
 const Login = () => {
+  const user = useSelector((state) => state.login);
   const [moreActionsOnRegisterForm, setMoreActionsOnRegisterForm] = useState({
     showModal: () => {},
   });
@@ -29,12 +30,11 @@ const Login = () => {
   }, []);
 
   const handleLoginEvent = () => {
-    console.log("STARTING LOGIN!");
     dispatcher({ type: USER_LOGIN_REQUESTED, userData });
   };
   useEffect(() => {
-    console.log({ userData });
-  }, [userData]);
+    console.log({ user });
+  }, [user]);
   return (
     <div className={styles["login-container"]}>
       <div className={styles["section-login-introduction"]}>
