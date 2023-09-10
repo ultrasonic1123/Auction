@@ -4,8 +4,11 @@ import { RegisterModal } from "../../components/Login/RegisterModal";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { USER_LOGIN_REQUESTED } from "../../redux/actions/user";
+import { useNavigate } from "react-router-dom";
+import Loader from "../../components/loader";
 const Login = () => {
   const user = useSelector((state) => state.login);
+  const navigator = useNavigate();
   const [moreActionsOnRegisterForm, setMoreActionsOnRegisterForm] = useState({
     showModal: () => {},
   });
@@ -33,7 +36,9 @@ const Login = () => {
     dispatcher({ type: USER_LOGIN_REQUESTED, userData });
   };
   useEffect(() => {
-    console.log({ user });
+    if (user.token) {
+      navigator("/");
+    }
   }, [user]);
   return (
     <div className={styles["login-container"]}>
@@ -66,7 +71,7 @@ const Login = () => {
         </div>
         <div className={styles["submit-login-form"]}>
           <button className={styles["login-button"]} onClick={handleLoginEvent}>
-            Login
+            {!user.isLoading ? "Login" : <Loader />}
           </button>
         </div>
         <span className={styles["forgot-password"]}>Forgot password?</span>

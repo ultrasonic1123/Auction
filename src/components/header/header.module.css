@@ -66,3 +66,25 @@
 .header-user span:hover {
   background-color: rgba(254, 254, 254, 0.95);
 }
+.menu-bar {
+  position: relative;
+}
+.menu-bar > ul {
+  display: none;
+}
+.menu-bar:hover > ul {
+  display: block;
+  position: absolute;
+  bottom: -calc(1rem + 20px);
+  right: 0px;
+  z-index: 999;
+}
+.menu-bar:hover > ul > li {
+  list-style: none;
+  display: block;
+  width: 200px;
+}
+
+.menu-bar:hover > ul > li > a > span {
+  width: 200px;
+}

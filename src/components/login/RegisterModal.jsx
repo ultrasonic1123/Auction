@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from "react";
 import styles from "../../assets/css/login/registerModal.module.css";
 import smsAuthentication from "../../firebase";
 import { signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
+import Loader from "../loader";
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 export const RegisterModal = ({ onMoreActions }) => {
   const monthOptions = [
     "January",
@@ -26,9 +28,12 @@ export const RegisterModal = ({ onMoreActions }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
   const [validPhoneNumber, setValidPhoneNumber] = useState(true);
   const [validFirstName, setValidFirstName] = useState(true);
   const [validLastName, setValidLastName] = useState(true);
+  const [validPassword, setValidPassword] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     onMoreActions((pre) => ({ ...pre, showModal: setShowModal }));
   }, []);
@@ -37,29 +42,34 @@ export const RegisterModal = ({ onMoreActions }) => {
     setShowModal(false);
   }, []);
 
-  const checkOTP = () => {
-    window.recaptchaVerifier = new RecaptchaVerifier(
-      smsAuthentication,
-      "recaptcha-container",
-      {
-        size: "invisible",
-      }
-    );
+  const generateRecaptcha = () => {
+    try {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        smsAuthentication,
+        "recaptcha-container"
+      );
+    } catch (err) {
+      console.log("Gen captcha", err);
+    }
+  };
+
+  const generateConfirmationOTP = () => {
     let appVerifier = window.recaptchaVerifier;
+    setIsLoading(true);
     signInWithPhoneNumber(smsAuthentication, phoneNumber, appVerifier)
       .then((confirmationResult) => {
-        confirmationResult.confirm(otp).then((user) => {
-          setValidOTP(true);
-        });
+        window.confirmationResult = confirmationResult;
+        setShowOTP(true);
+        setIsLoading(false);
       })
       .catch((err) => {
-        setValidOTP(false);
+        console.log(err);
+        setIsLoading(false);
       });
   };
 
   const handleOnchange = (event, setState, validateState) => {
     let formatValue = event.target.value.trim();
-    console.log({ formatValue });
     setState(formatValue);
     validateState(formatValue);
   };
@@ -81,17 +91,64 @@ export const RegisterModal = ({ onMoreActions }) => {
     else setValidPhoneNumber(true);
   };
 
+  const validatePassword = (password) => {
+    if (!password) setValidPassword(false);
+    else setValidPassword(true);
+  };
+
   const handleIdentifyPhoneNumber = () => {
-    if (phoneNumber) setShowOTP(true);
-    else {
+    if (phoneNumber) {
+      generateRecaptcha();
+      generateConfirmationOTP();
+    } else {
       setValidPhoneNumber(false);
     }
   };
 
-  const validateOTP = () => {};
+  const validateOTP = () => {
+    console.log("OTP validate");
+  };
+
+  const registerNewUser = async () => {
+    setIsLoading(true);
+    const response = await fetch(`${SERVER_URL}/user/register`, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        userData: {
+          firstName,
+          lastName,
+          password,
+          phoneNumber,
+        },
+      }),
+    });
+    setIsLoading(false);
+    return await response.json();
+  };
+
+  const handleVerifyOTP = () => {
+    setIsLoading(true);
+    let otpconfirm = window.confirmationResult;
+    otpconfirm
+      .confirm(otp)
+      .then((user) => {
+        setValidOTP(true);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setValidOTP(false);
+        setIsLoading(false);
+      });
+  };
 
   const handleOnRegister = () => {
-    checkOTP();
+    registerNewUser()
+      .then((result) => console.log(result))
+      .catch((e) => console.log(e));
   };
 
   const ErrorMessage = ({ message }) => {
@@ -101,10 +158,6 @@ export const RegisterModal = ({ onMoreActions }) => {
       </span>
     );
   };
-
-  useEffect(() => {
-    console.log(firstName, lastName, phoneNumber);
-  }, [firstName, lastName, phoneNumber]);
 
   return showModal ? (
     <div className={styles["register-modal"]}>
@@ -158,6 +211,17 @@ export const RegisterModal = ({ onMoreActions }) => {
             />
           </div>
           <div className={styles["group-button"]}>
+            <label>Password</label>
+            {!validPassword ? (
+              <ErrorMessage message="Password is required" />
+            ) : null}
+            <input
+              type="text"
+              onChange={(e) => handleOnchange(e, setPassword, validatePassword)}
+              value={password}
+            />
+          </div>
+          <div className={styles["group-button"]}>
             <span>Date Of Birth</span>
             <div className={styles["date-of-birth"]}>
               <select>
@@ -192,24 +256,50 @@ export const RegisterModal = ({ onMoreActions }) => {
                 display: "flex",
                 width: "100%",
                 justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
               }}
             >
               <h4 style={{ paddingRight: "10px" }}>OTP</h4>
               <input
                 type="text"
+                style={{ width: "100%", padding: "5px 0px" }}
                 onChange={(e) => handleOnchange(e, setOtp, validateOTP)}
                 value={otp}
               ></input>
             </div>
-            <div id="recaptcha-container"></div>
           </>
         ) : null}
-        <button
-          className={styles["register-button"]}
-          onClick={!showOTP ? handleIdentifyPhoneNumber : handleOnRegister}
-        >
-          {!showOTP ? "Identify PhoneNumber" : "Register"}
-        </button>
+        <div id="recaptcha-container"></div>
+        {!isLoading ? (
+          <button
+            className={styles["register-button"]}
+            onClick={
+              !showOTP
+                ? handleIdentifyPhoneNumber
+                : validOTP
+                ? handleOnRegister
+                : handleVerifyOTP
+            }
+          >
+            {!showOTP
+              ? "Identify PhoneNumber"
+              : validOTP
+              ? "Register"
+              : "Verify OTP"}
+          </button>
+        ) : (
+          <button
+            className={styles["register-button"]}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Loader />
+          </button>
+        )}
       </div>
     </div>
   ) : null;

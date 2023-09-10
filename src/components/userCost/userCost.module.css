@@ -1,0 +1,40 @@
+.box {
+  position: relative;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+.box::before {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100px;
+  background-image: linear-gradient(#00ccff, #ff00b7);
+  animation: animate 4s infinite;
+}
+
+.box > div {
+  position: absolute;
+  inset: 5px;
+  background-color: #fff;
+}
+@keyframes animate {
+  0% {
+    rotate: 0deg;
+  }
+  100% {
+    rotate: 360deg;
+  }
+}
+
+.highest-price {
+  animation: fontAnimate 1.5s infinite;
+}
+@keyframes fontAnimate {
+  0% {
+    font-size: 1rem;
+  }
+  100% {
+    font-size: 1.75rem;
+  }
+}

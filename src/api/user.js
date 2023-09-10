@@ -6,14 +6,12 @@ const optionsLogin = {
   },
 };
 const userLoginRequest = async (userInfo) => {
-  console.log(userInfo);
   try {
     let jsonToken = await fetch(`${SERVER_URL}/user/login`, {
       ...optionsLogin,
       body: JSON.stringify(userInfo),
     });
     let userToken = await jsonToken.json();
-    console.log({ userToken });
     return userToken;
   } catch (err) {
     console.log("ERR-LOGIN: ", err);

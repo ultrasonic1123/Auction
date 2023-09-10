@@ -62,6 +62,9 @@
   width: 80%;
 }
 .login-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   margin-top: 1.5rem;
   padding: 0.75rem;
   width: 100%;

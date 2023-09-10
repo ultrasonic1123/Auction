@@ -6,7 +6,7 @@ const Dashboard = () => {
   return (
     <>
       <DashboardHeader />
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", background: "rgb(245, 245, 245" }}>
         <GlobalChat />
         <DashboardBody />
       </div>
