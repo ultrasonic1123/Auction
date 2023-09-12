@@ -41,7 +41,7 @@ const CategoriesList = () => {
       <div
         onClick={() =>
           navigator(`/category?type=${item.name.toLowerCase()}`, {
-            state: { categoryType: item.name },
+            state: { categoryType: item.name.toLowerCase() },
           })
         }
         className={styles["item-category"]}

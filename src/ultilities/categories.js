@@ -1,8 +1,8 @@
 export const CATEGORIES = [
-  "Furnitures",
-  "Sports",
-  "Jewelries",
-  "Books",
-  "Accommodations",
-  "Cars",
+  "furnitures",
+  "sports",
+  "jewelries",
+  "books",
+  "accommodations",
+  "cars",
 ];

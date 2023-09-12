@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, generatePath } from "react-router-dom";
 import { convertToBase64 } from "../../ultilities/convertBase64";
-const AuctionRoom = ({ data }) => {
+const AuctionRoom = ({ data, isEdit }) => {
   const navigator = useNavigate();
   const base64Image = convertToBase64(data.image.data.data);
   console.log({ base64Image });
@@ -50,18 +50,21 @@ const AuctionRoom = ({ data }) => {
           }}
           onClick={() => {
             navigator(
-              generatePath("/room/:id", {
-                id: data["_id"],
-              }),
+              !isEdit
+                ? generatePath("/room/:id", {
+                    id: data["_id"],
+                  })
+                : "/create-new-auction",
               {
                 state: {
                   data,
+                  isEdit,
                 },
               }
             );
           }}
         >
-          Join
+          {!isEdit ? "Join" : "Update"}
         </div>
       </div>
     </>

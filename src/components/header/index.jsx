@@ -3,7 +3,7 @@ import DLogo from "../../assets/D.png";
 import styles from "./header.module.css";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-const DashboardHeader = () => {
+const DashboardHeader = ({ resetRoom }) => {
   const [isLogin, setIsLogin] = useState(false);
   const user = useSelector((state) => state.login);
 
@@ -35,7 +35,10 @@ const DashboardHeader = () => {
               </span>
               <ul>
                 <li>
-                  <Link to="/create-new-auction">
+                  <Link
+                    to="/create-new-auction"
+                    onClick={resetRoom ? () => resetRoom() : () => {}}
+                  >
                     <span>Create new aution</span>
                   </Link>
                 </li>

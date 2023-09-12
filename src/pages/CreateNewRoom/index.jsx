@@ -3,26 +3,40 @@ import styles from "./createRoom.module.css";
 import DashboardHeader from "../../components/header";
 import { CATEGORIES } from "../../ultilities/categories";
 import { useSelector } from "react-redux";
+import Loader from "../../components/loader";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+import { useLocation } from "react-router-dom";
+import { convertToBase64 } from "../../ultilities/convertBase64";
 const CreateNewRoom = () => {
   const [previewImage, setPreviewImage] = useState("");
   const [file, setFile] = useState("");
-  const [roomData, setRoomData] = useState({
-    owner: "",
-    roomName: "",
-    productName: "",
-    description: "",
-    category: "",
-    priceStep: 10000,
-    amounts: 1,
-    initialPrice: 0,
-    lastingTime: "30m",
-    location: "Ha Noi",
-  });
-  const [isLoading, setIsLoading] = useState(false);
+  const { state } = useLocation();
+  const base64Image = convertToBase64(state?.data?.image?.data?.data);
+  const isEdit = state?.isEdit;
   const user = useSelector((state) => state.login);
+  const [roomData, setRoomData] = useState(
+    state?.data ?? {
+      owner: user.phoneNumber ?? "",
+      roomName: "",
+      productName: "",
+      description: "",
+      category: "furnitures",
+      priceStep: 10000,
+      amounts: 1,
+      initialPrice: 0,
+      lastingTime: "30m",
+      location: "Ha Noi",
+      status: "pending",
+      startAt: null,
+      history: [],
+      victoryPhoneNumber: "",
+      bannedUsers: "",
+    }
+  );
+  const [isLoading, setIsLoading] = useState(false);
+  console.log(user);
   const handleChangeRoomName = (e) => {
-    let name = e.target.value.trim();
+    let name = e.target.value;
     setRoomData(() => ({
       ...roomData,
       roomName: name,
@@ -30,7 +44,7 @@ const CreateNewRoom = () => {
   };
 
   const handleChangeproductName = (e) => {
-    let productName = e.target.value.trim();
+    let productName = e.target.value;
     setRoomData(() => ({
       ...roomData,
       productName: productName,
@@ -38,7 +52,7 @@ const CreateNewRoom = () => {
   };
 
   const handleChangeDesc = (e) => {
-    let description = e.target.value.trim();
+    let description = e.target.value;
     setRoomData(() => ({
       ...roomData,
       description: description,
@@ -54,7 +68,7 @@ const CreateNewRoom = () => {
   };
 
   const handleChangePriceStep = (e) => {
-    let priceStep = e.target.value.trim();
+    let priceStep = e.target.value;
     setRoomData(() => ({
       ...roomData,
       priceStep: priceStep,
@@ -70,7 +84,7 @@ const CreateNewRoom = () => {
   };
 
   const handleChangeLastingTime = (e) => {
-    let lastingTime = e.target.value.trim();
+    let lastingTime = e.target.value;
     setRoomData(() => ({
       ...roomData,
       lastingTime: lastingTime,
@@ -78,7 +92,7 @@ const CreateNewRoom = () => {
   };
 
   const handleChangeLocation = (e) => {
-    let location = e.target.value.trim();
+    let location = e.target.value;
     setRoomData(() => ({
       ...roomData,
       location: location,
@@ -90,6 +104,20 @@ const CreateNewRoom = () => {
     setRoomData(() => ({
       ...roomData,
       initialPrice: initialPrice,
+    }));
+  };
+
+  const handleChangeStatus = (e) => {
+    setRoomData(() => ({
+      ...roomData,
+      status: e.target.value,
+    }));
+  };
+
+  const handleChangeBannedUsers = (e) => {
+    setRoomData(() => ({
+      ...roomData,
+      bannedUsers: e.target.bannedUsers,
     }));
   };
 
@@ -107,7 +135,7 @@ const CreateNewRoom = () => {
     }
   };
 
-  const handleOnSubmitFormData = async () => {
+  const handleOnSubmitFormData = async (update = false) => {
     setIsLoading(true);
     let formData = new FormData();
 
@@ -115,32 +143,74 @@ const CreateNewRoom = () => {
     formData.append("room", JSON.stringify(roomData));
 
     try {
-      const newRoom = await fetch(`${SERVER_URL}/user/create-new-room`, {
-        method: "POST",
-        body: formData,
-      });
-      console.log("room", newRoom);
+      const result = await fetch(
+        `${SERVER_URL}/user/${update ? "update-room" : "create-new-room"}`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+      const newRoom = await result.json();
+      console.log("newRoom", newRoom);
+      if (newRoom.status == "active" && !newRoom.startAt) {
+        const updatedStartAt = await fetch(
+          `${SERVER_URL}/user/update-start-at`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              _id: newRoom._id,
+              startAt: Date.now(),
+            }),
+          }
+        );
+      }
+      if (!update) {
+        const updatedUser = await fetch(`${SERVER_URL}/user/update-own-room`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            phoneNumber: user.phoneNumber,
+            room: newRoom._id,
+          }),
+        });
+        console.log({ updatedUser });
+      }
 
-      const updatedUser = await fetch(`${SERVER_URL}/user/update-own-room`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          phoneNumber: user.phoneNumber,
-          room: newRoom._Id,
-        }),
-      });
-
-      console.log({ updatedUser });
+      setIsLoading(false);
     } catch (e) {
-      console.log("Something went wrong!");
+      console.log("Something went wrong!", e);
+      setIsLoading(false);
     }
+  };
+
+  const resetRoom = () => {
+    setRoomData({
+      owner: "",
+      roomName: "",
+      productName: "",
+      description: "",
+      category: "furnitures",
+      priceStep: 10000,
+      amounts: 1,
+      initialPrice: 0,
+      lastingTime: "30m",
+      location: "Ha Noi",
+      status: "pending",
+      startAt: null,
+      history: [],
+      victoryPhoneNumber: "",
+      bannedUsers: "",
+    });
   };
 
   return (
     <>
-      <DashboardHeader />
+      <DashboardHeader resetRoom={resetRoom} />
       <div
         style={{
           width: "100vw",
@@ -171,9 +241,10 @@ const CreateNewRoom = () => {
               name="category"
               onChange={(e) => handleChangeCategory(e)}
               value={roomData.category}
+              defaultValue={CATEGORIES[0]}
             >
               {CATEGORIES.map((item) => (
-                <option>{item}</option>
+                <option value={item}>{item}</option>
               ))}
             </select>
           </div>
@@ -202,6 +273,35 @@ const CreateNewRoom = () => {
             ></input>
           </div>
         </div>
+        <div
+          style={{ display: "flex", width: "100%", justifyContent: "center" }}
+        >
+          <div className={styles["create-room-item"]}>
+            <label htmlFor="status">Status</label>
+            <select
+              id="status"
+              name="status"
+              onChange={(e) => handleChangeStatus(e)}
+              defaultValue="pending"
+              value={roomData.status}
+            >
+              <option value="pending">Pending</option>
+              <option value="active">Active</option>
+              <option value="closed">Closed</option>
+              <option value="reopen">Re-open</option>
+            </select>
+          </div>
+          <div className={styles["create-room-item"]}>
+            <label htmlFor="banned-user">Banned Users</label>
+            <input
+              id="banned-user"
+              placeholder="User phone numbers..."
+              name="bannedUser"
+              onChange={(e) => handleChangeBannedUsers(e)}
+              value={roomData.bannedUsers}
+            ></input>
+          </div>
+        </div>
         <h2 style={{ marginTop: "20px" }}>Product Detail:</h2>
         <div
           style={{ display: "flex", width: "100%", justifyContent: "center" }}
@@ -210,7 +310,7 @@ const CreateNewRoom = () => {
             <label htmlFor="product-name">Product name</label>
             <input
               id="product-name"
-              placeholder="Room name..."
+              placeholder="Product name..."
               name="productName"
               onChange={(e) => handleChangeproductName(e)}
               value={roomData.productName}
@@ -275,9 +375,17 @@ const CreateNewRoom = () => {
               id="image-preview"
               htmlFor="image-input"
               className={styles["image-preview"]}
-              style={previewImage ? { backgroundImage: "none" } : null}
+              style={
+                previewImage || base64Image ? { backgroundImage: "none" } : null
+              }
             >
-              {previewImage ? <img src={previewImage}></img> : null}
+              {previewImage ? (
+                <img src={previewImage}></img>
+              ) : base64Image ? (
+                <img
+                  src={`data:image/${state?.data?.image?.data?.imageType};base64,${base64Image}`}
+                />
+              ) : null}
             </label>
             <input
               id="image-input"
@@ -288,12 +396,22 @@ const CreateNewRoom = () => {
             />
           </div>
         </div>
-        <button
-          className={styles["submit-btn"]}
-          onClick={() => handleOnSubmitFormData()}
-        >
-          Create Auction Room
-        </button>
+        {!isLoading ? (
+          <button
+            className={styles["submit-btn"]}
+            onClick={
+              !isEdit
+                ? () => handleOnSubmitFormData()
+                : () => handleOnSubmitFormData(true)
+            }
+          >
+            {!isEdit ? "Create Auction Room" : "Update room"}
+          </button>
+        ) : (
+          <button className={styles["submit-btn"]}>
+            <Loader />
+          </button>
+        )}
       </div>
     </>
   );

@@ -8,10 +8,11 @@ const CategoryDetail = () => {
   const [auctionRooms, setAuctionRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const type = useLocation().state.categoryType;
+  console.log({ type });
   const getRoomsByCategory = async () => {
     setIsLoading(true);
     const response = await fetch(
-      `${SERVER_URL}/user/get-rooms-by-category?category=${type}`,
+      `${SERVER_URL}/user/get-rooms-by-category?category=${type.toLowerCase()}`,
       {
         method: "GET",
         headers: {
