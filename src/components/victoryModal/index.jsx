@@ -46,6 +46,7 @@ const VictoryModal = ({ user, isOpen, setIsOpen }) => {
           onClick={() => setIsOpen(false)}
         ></i>
         <h2>Congratulation {user.user}</h2>
+        <h2>Phone: +84XXXXXXX{user.phoneNumber.slice(9, 13)}</h2>
         <h3>You are the winer of this auction</h3>
       </div>
     </div>

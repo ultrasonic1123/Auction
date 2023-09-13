@@ -12,7 +12,7 @@ const RoomDetail = () => {
   const user = useSelector((state) => state.login);
   const roomId = useParams();
   const { state } = useLocation();
-  console.log(1111, state);
+
   const [price, setPrice] = useState(null);
   const [bidHistory, setBidHistory] = useState(
     !state?.isView
