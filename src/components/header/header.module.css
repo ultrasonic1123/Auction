@@ -58,13 +58,13 @@
   padding: 10px;
   border: 1px solid grey;
   border-radius: 4px;
-  background-color: rgba(254, 254, 254, 0.65);
+  background-color: rgba(254, 254, 254, 1);
   cursor: pointer;
   text-decoration: none;
   color: black;
 }
 .header-user span:hover {
-  background-color: rgba(254, 254, 254, 0.95);
+  background-color: rgba(245, 245, 245, 1);
 }
 .menu-bar {
   position: relative;

@@ -7,6 +7,7 @@ const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const DashboardBody = () => {
   const [rooms, setRooms] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+
   const getRooms = async () => {
     setIsLoading(true);
     let response = await fetch(`${SERVER_URL}/user/get-rooms`, {
@@ -19,15 +20,13 @@ const DashboardBody = () => {
     setRooms(data);
     setIsLoading(false);
   };
+
   useEffect(() => {
     getRooms();
   }, []);
   return (
-    <div style={{ width: "75%", marginLeft: "0px" }}>
-      <div className={styles["upper-body"]}>
-        {/* <SliceShow /> */}
-        {/* <Notify /> */}
-      </div>
+    <div style={{ width: "75%", marginLeft: "0px", fontFamily: "Nunito" }}>
+      <div className={styles["upper-body"]}></div>
       <div style={{ background: "white" }}>
         <h2
           style={{

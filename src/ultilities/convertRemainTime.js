@@ -1,5 +1,4 @@
 export function convertRemainTime(startAt, lastingTime) {
-  console.log("lastingTime", lastingTime);
   if (lastingTime.includes("h")) {
     lastingTime = +lastingTime.split("h")[0] * 60 * 60;
   } else if (lastingTime.includes("m")) {

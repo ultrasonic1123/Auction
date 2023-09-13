@@ -4,8 +4,8 @@ import { useSelector } from "react-redux";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 import AuctionRoom from "../../components/auctionRoom";
 const History = () => {
-  const [victoryRooms, setVictoryRooms] = useState([]);
   const [myRooms, setMyRooms] = useState([]);
+  const [myVictoryRooms, setmyVictoryRooms] = useState([]);
   const [isLoadingMyRooms, setIsLoadingMyRooms] = useState(false);
   const [isLoadingMyVictoryRooms, setIsLoadingMyVictoryRooms] = useState(false);
   const user = useSelector((state) => state.login);
@@ -29,23 +29,41 @@ const History = () => {
       body: JSON.stringify({ ids: data.rooms }),
     });
     let rooms = await roomsRes.json();
+    let vitoryRooms = await fetch(`${SERVER_URL}/user/get-own-rooms`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ids: data.victoryRooms }),
+    });
+    let vitoryRoomsJson = await vitoryRooms.json();
     setMyRooms(rooms);
+    setmyVictoryRooms(vitoryRoomsJson);
   };
-
-  const getViectoryRooms = async (userId) => {};
 
   const renderMyRooms = () => {
     return (
-      <div style={{ display: "flex" }}>
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
         {myRooms.map((item) => (
-          <AuctionRoom isEdit={true} data={item} />
+          <AuctionRoom isEdit={true} data={item} allowView={true} />
         ))}
       </div>
     );
   };
 
   const renderVictoryRooms = () => {
-    return <div>Victory Rooms</div>;
+    return (
+      <div style={{ display: "flex", flexWrap: "wrap" }}>
+        {myVictoryRooms.map((item) => (
+          <AuctionRoom
+            isEdit={false}
+            allowView={true}
+            isVictoryRoom={true}
+            data={item}
+          />
+        ))}
+      </div>
+    );
   };
 
   useEffect(() => {
@@ -56,11 +74,27 @@ const History = () => {
       <DashboardHeader />
       <div>
         <div>
-          <h2>My own rooms</h2>
+          <h2
+            style={{
+              marginTop: "20px",
+              marginLeft: "20px",
+              marginBottom: "10px",
+            }}
+          >
+            My own rooms
+          </h2>
           {renderMyRooms()}
         </div>
         <div>
-          <h2>Place of victory</h2>
+          <h2
+            style={{
+              marginTop: "20px",
+              marginLeft: "20px",
+              marginBottom: "10px",
+            }}
+          >
+            Place of victory
+          </h2>
           {renderVictoryRooms()}
         </div>
       </div>
