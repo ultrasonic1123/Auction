@@ -1,13 +1,25 @@
+.list-chat {
+  display: flex;
+  flex-direction: column;
+}
 .chat-item {
-  display: block;
+  position: relative;
   height: 40px;
-  padding: 5px 0px;
-  border-radius: 4px;
-  width: fit-content;
-  background-color: rgb(245, 245, 245);
-  margin: 10px 0px 0px 10px;
+  margin: 20px 0px 0px 10px;
+}
+
+.chat-message {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0px 5px;
+  background-color: rgb(245, 245, 245);
+  padding: 5px 0px;
+  border-radius: 4px;
+  width: fit-content;
+  padding: 7px 5px;
+}
+.chat-user {
+  font-size: 0.75rem;
+  position: absolute;
+  top: -15px;
 }

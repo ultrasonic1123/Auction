@@ -12,7 +12,10 @@ const MessageBox = () => {
   const user = useSelector((state) => state.login);
   console.log("USER", user);
   const handleChat = () => {
-    socket.emit("chat message", { message: message });
+    socket.emit("chat message", {
+      message: message,
+      user: { name: user.firstName },
+    });
   };
   const error = errorMessage && (
     <div

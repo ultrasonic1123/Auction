@@ -2,12 +2,10 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import styles from "./chatList.module.css";
 import { socket } from "../../socket";
+import { useSelector } from "react-redux";
 const ChatList = () => {
-  const [messages, setMessages] = useState([
-    "Welcome to Dken Auction!",
-    "Ready for staring your own aution",
-    "Or join interesting aution",
-  ]);
+  const user = useSelector((state) => state.login);
+  const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     socket.on("chat message", onChatListener);
@@ -15,17 +13,37 @@ const ChatList = () => {
     return () => socket.off("chat message", onChatListener);
   }, []);
 
-  const onChatListener = (message) => {
-    setMessages((prev) => [...prev, message.message]);
+  const onChatListener = (data) => {
+    console.log(data);
+    setMessages([...data]);
   };
 
   const MessageItem = (message) => (
-    <li className={styles["chat-item"]}>{message}</li>
+    <div
+      className={styles["chat-item"]}
+      style={
+        message.user.name == user.firstName
+          ? { alignSelf: "flex-end" }
+          : { alignSelf: "flex-start" }
+      }
+    >
+      <span className={styles["chat-user"]}>{message.user.name}</span>
+      <span
+        style={
+          message.user.name == user.firstName
+            ? { backgroundColor: "rgba(245, 245, 245, 0.75)" }
+            : null
+        }
+        className={styles["chat-message"]}
+      >
+        {message.message}
+      </span>
+    </div>
   );
 
   return (
-    <div>
-      <ul>{messages.map((item) => MessageItem(item))}</ul>
+    <div className={styles["list-chat"]}>
+      {messages.map((item) => MessageItem(item))}
     </div>
   );
 };

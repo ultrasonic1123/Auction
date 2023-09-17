@@ -116,6 +116,7 @@ const AuctionRoom = ({ data, isEdit, allowView, isVictoryRoom }) => {
                       : {
                           data,
                           isView: true,
+                          isEdit,
                         },
                 }
               );

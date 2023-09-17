@@ -13,5 +13,5 @@ export function convertRemainTime(startAt, lastingTime) {
   let mins = Math.floor((remainSecs / 60) % 60);
   let hs = Math.floor(remainSecs / 60 / 60);
 
-  return `${hs} hours ${mins}m ${secs}s`;
+  return `${hs}h ${mins}m ${secs}s`;
 }

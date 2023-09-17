@@ -73,7 +73,6 @@ const DashboardBody = () => {
             }}
           >
             {rooms.map((item) => {
-              console.log("check", item);
               return <AuctionRoom data={item} />;
             })}
           </div>

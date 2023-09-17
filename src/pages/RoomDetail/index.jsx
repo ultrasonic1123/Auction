@@ -67,56 +67,59 @@ const RoomDetail = () => {
         convertRemainTime(state.data.startAt, state.data.lastingTime)
       );
     }, 1000);
-    let timeToEnd =
-      calculateLastingTime(state.data.lastingTime) -
-      Math.floor((Date.now() - state.data.startAt) / 1000);
-    if (timeToEnd < 0) timeToEnd = 0;
-    let timeOutId = setTimeout(() => {
-      if (user?.phoneNumber == state.data.owner) {
-        fetch(`${SERVER_URL}/user/update-room-status`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: state.data._id,
-            status: "closed",
-          }),
-        })
-          .then(() => {
-            console.log("END - ROOM");
+    let timeOutId;
+    if (state.data.status === "active") {
+      let timeToEnd =
+        calculateLastingTime(state.data.lastingTime) -
+        Math.floor((Date.now() - state.data.startAt) / 1000);
+      if (timeToEnd < 0) timeToEnd = 0;
+      timeOutId = setTimeout(() => {
+        if (user?.phoneNumber == state.data.owner) {
+          fetch(`${SERVER_URL}/user/update-room-status`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: state.data._id,
+              status: "closed",
+            }),
           })
-          .catch((e) => console.log("ERR", e));
-      }
+            .then(() => {
+              console.log("END - ROOM");
+            })
+            .catch((e) => console.log("ERR", e));
+        }
 
-      setDisableInput(true);
-      setDisplayModal(true);
-      console.log("CHECK", bidHistory);
-      if (user?.phoneNumber == state.data.owner) {
-        fetch(`${SERVER_URL}/user/update-room-history`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: state.data._id,
-            history: bidHistory,
-          }),
-        });
-      }
-      if (user?.phoneNumber === bidHistory[0].phoneNumber) {
-        fetch(`${SERVER_URL}/user/update-victory-rooms`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            room: state.data._id,
-            phoneNumber: user.phoneNumber,
-          }),
-        });
-      }
-    }, timeToEnd * 1000);
+        setDisableInput(true);
+        setDisplayModal(true);
+        console.log("CHECK", bidHistory);
+        if (user?.phoneNumber == state.data.owner) {
+          fetch(`${SERVER_URL}/user/update-room-history`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: state.data._id,
+              history: bidHistory,
+            }),
+          });
+        }
+        if (user?.phoneNumber === bidHistory[0].phoneNumber) {
+          fetch(`${SERVER_URL}/user/update-victory-rooms`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              room: state.data._id,
+              phoneNumber: user.phoneNumber,
+            }),
+          });
+        }
+      }, timeToEnd * 1000);
+    }
     return () => {
       clearInterval(timeId);
       clearTimeout(timeOutId);
@@ -242,67 +245,139 @@ const RoomDetail = () => {
         </div>
         <div style={{ display: "flex" }}>
           <div
-            style={{
-              width: "30%",
-              display: "flex",
-              justifyContent: "space-between",
-              flexDirection: "column",
-            }}
+            style={
+              state.data.status === "active"
+                ? {
+                    width: "30%",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexDirection: "column",
+                  }
+                : {
+                    width: "30%",
+                    display: "flex",
+                    justifyContent: "center",
+                    flexDirection: "column",
+                  }
+            }
           >
             <div style={{ width: "100%" }}>
-              <h3 style={{ marginBottom: "15px" }}>Auction Room Information</h3>
-              <h4 style={{ marginBottom: "15px" }}>
-                Aution Owner: {state.data.owner}
+              <h3
+                style={{
+                  marginBottom: "5px",
+                  height: "40px",
+                  textAlign: "center",
+                  backgroundColor: "rgb(245, 245, 245)",
+                }}
+              >
+                Auction Room Information
+              </h3>
+              <h4 style={{ marginBottom: "5px", textAlign: "center" }}>
+                Auction Owner: {state.data.owner}
               </h4>
               <ul
                 style={{
                   listStyle: "none",
                   display: "flex",
                   flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: "5px",
                 }}
               >
-                <li>
+                <li
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: "2px solid green",
+                    borderRadius: "4px",
+                    width: "60%",
+                    marginBottom: "5px",
+                  }}
+                >
                   <strong>Price step:</strong> {state.data.priceStep} VND
                 </li>
-                <li>
+                <li
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: "2px solid green",
+                    borderRadius: "4px",
+                    marginBottom: "5px",
+                    width: "60%",
+                  }}
+                >
                   <strong>Lasting time:</strong> {state.data.lastingTime}
                 </li>
-                <li>
-                  <strong>Remain time:</strong> {remainTime}
+                <li
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    border: "2px solid red",
+                    borderRadius: "4px",
+                    width: "60%",
+                  }}
+                >
+                  <strong>Remain time:</strong>
+                  <span style={{ color: "red", fontWeight: 600 }}>
+                    {remainTime}
+                  </span>
                 </li>
               </ul>
             </div>
-            {!state?.isView ? (
-              <div style={{ width: "100%" }}>
-                {error}
-                <input
-                  style={{
-                    width: "100%",
-                    height: "40px",
-                  }}
-                  placeholder="Enter your price..."
-                  type="number"
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                ></input>
-                <button
-                  style={{ textAlign: "center", width: "100%", height: "40px" }}
-                  onClick={
-                    user.phoneNumber
-                      ? handleOnBid
-                      : () => {
-                          setErrorMessage(
-                            "You must login to use this function"
-                          );
-                          setTimeout(() => {
-                            setErrorMessage("");
-                          }, 5000);
-                        }
-                  }
-                >
-                  Bid
-                </button>
-              </div>
+            {!disbleInput ? (
+              !state?.isView ? (
+                <div style={{ width: "100%" }}>
+                  {error}
+                  <input
+                    style={{
+                      width: "100%",
+                      height: "40px",
+                      border: "none",
+                      backgroundColor: "rgb(245, 245, 245)",
+                    }}
+                    placeholder="Enter your price..."
+                    type="number"
+                    value={price}
+                    onChange={(e) => setPrice(e.target.value)}
+                  ></input>
+                  <button
+                    style={{
+                      textAlign: "center",
+                      width: "100%",
+                      height: "40px",
+                      fontWeight: 600,
+                      fontSize: "1.25rem",
+                      border: "none",
+                    }}
+                    onClick={
+                      user.phoneNumber
+                        ? handleOnBid
+                        : () => {
+                            setErrorMessage(
+                              "You must login to use this function"
+                            );
+                            setTimeout(() => {
+                              setErrorMessage("");
+                            }, 5000);
+                          }
+                    }
+                  >
+                    Bet
+                  </button>
+                </div>
+              ) : (
+                <div style={{ width: "100%" }}>
+                  <h4>Winner's name:</h4>
+                  <span>{state?.data?.history[0]?.user ?? ""}</span>
+                  <h4>Winner's phone number:</h4>
+                  <span>{state?.data?.history[0]?.phoneNumber ?? ""}</span>
+                </div>
+              )
             ) : (
               <div style={{ width: "100%" }}>
                 <h4>Winner's name:</h4>

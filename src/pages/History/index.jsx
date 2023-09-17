@@ -3,14 +3,15 @@ import DashboardHeader from "../../components/header";
 import { useSelector } from "react-redux";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 import AuctionRoom from "../../components/auctionRoom";
+import Loader from "../../components/loader";
 const History = () => {
   const [myRooms, setMyRooms] = useState([]);
   const [myVictoryRooms, setmyVictoryRooms] = useState([]);
-  const [isLoadingMyRooms, setIsLoadingMyRooms] = useState(false);
-  const [isLoadingMyVictoryRooms, setIsLoadingMyVictoryRooms] = useState(false);
+  const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.login);
 
   const getOwnRooms = async () => {
+    setLoading(true);
     let res = await fetch(
       `${SERVER_URL}/user/get-user-by-phone?phoneNumber=${user.phoneNumber}`,
       {
@@ -39,29 +40,48 @@ const History = () => {
     let vitoryRoomsJson = await vitoryRooms.json();
     setMyRooms(rooms);
     setmyVictoryRooms(vitoryRoomsJson);
+    setLoading(false);
   };
 
   const renderMyRooms = () => {
     return (
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {myRooms.map((item) => (
-          <AuctionRoom isEdit={true} data={item} allowView={true} />
-        ))}
+      <div
+        style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
+      >
+        {loading ? (
+          <Loader />
+        ) : (
+          myRooms.map((item) => (
+            <AuctionRoom
+              isEdit={true}
+              data={item}
+              allowView={true}
+              key={item._id}
+            />
+          ))
+        )}
       </div>
     );
   };
 
   const renderVictoryRooms = () => {
     return (
-      <div style={{ display: "flex", flexWrap: "wrap" }}>
-        {myVictoryRooms.map((item) => (
-          <AuctionRoom
-            isEdit={false}
-            allowView={true}
-            isVictoryRoom={true}
-            data={item}
-          />
-        ))}
+      <div
+        style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
+      >
+        {loading ? (
+          <Loader />
+        ) : (
+          myVictoryRooms.map((item) => (
+            <AuctionRoom
+              key={item._id}
+              isEdit={false}
+              allowView={true}
+              isVictoryRoom={true}
+              data={item}
+            />
+          ))
+        )}
       </div>
     );
   };
@@ -79,6 +99,7 @@ const History = () => {
               marginTop: "20px",
               marginLeft: "20px",
               marginBottom: "10px",
+              textAlign: "center",
             }}
           >
             My own rooms
@@ -91,6 +112,7 @@ const History = () => {
               marginTop: "20px",
               marginLeft: "20px",
               marginBottom: "10px",
+              textAlign: "center",
             }}
           >
             Place of victory

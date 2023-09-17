@@ -13,6 +13,7 @@ const CreateNewRoom = () => {
   const { state } = useLocation();
   const base64Image = convertToBase64(state?.data?.image?.data?.data);
   const isEdit = state?.isEdit;
+  console.log("isEdit", isEdit);
   const user = useSelector((state) => state.login);
   const [roomData, setRoomData] = useState(
     state?.data ?? {
