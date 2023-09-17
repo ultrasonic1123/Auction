@@ -36,7 +36,6 @@ const CreateNewRoom = () => {
     }
   );
   const [isLoading, setIsLoading] = useState(false);
-  console.log(user);
   const handleChangeRoomName = (e) => {
     let name = e.target.value;
     setRoomData(() => ({
@@ -119,10 +118,10 @@ const CreateNewRoom = () => {
   const handleChangeBannedUsers = (e) => {
     setRoomData(() => ({
       ...roomData,
-      bannedUsers: e.target.bannedUsers,
+      bannedUsers: e.target.value,
     }));
   };
-
+  console.log(roomData.bannedUsers);
   const handleImageChange = (e) => {
     let file = e.target.files[0];
     setFile(file);

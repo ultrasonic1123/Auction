@@ -7,6 +7,8 @@ import { convertToBase64 } from "../../ultilities/convertBase64";
 import { useSelector } from "react-redux/es/hooks/useSelector";
 import { convertRemainTime } from "../../ultilities/convertRemainTime";
 import VictoryModal from "../../components/victoryModal";
+import styles from "./roomDetail.module.css";
+import Toast from "../../components/toast";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 const RoomDetail = () => {
   const user = useSelector((state) => state.login);
@@ -28,26 +30,6 @@ const RoomDetail = () => {
   const [disbleInput, setDisableInput] = useState(false);
   const [displayModal, setDisplayModal] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const error = errorMessage && (
-    <div
-      style={{
-        position: "fixed",
-        bottom: "80px",
-        width: "25%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "Nunito",
-      }}
-    >
-      <i
-        className="fa fa-exclamation-circle"
-        aria-hidden="true"
-        style={{ color: "red" }}
-      ></i>
-      <span style={{ color: "red", fontWeight: "600" }}> {errorMessage}</span>
-    </div>
-  );
 
   useEffect(() => {
     socket.emit("join", { room: roomId.id, value: "" });
@@ -137,8 +119,7 @@ const RoomDetail = () => {
   };
 
   const handleOnBid = () => {
-    console.log("user22", user);
-    if (price < bidHistory[0].price + +state.data.priceStep) {
+    if (price < +bidHistory[0].price + +state.data.priceStep) {
       setErrorMessage(
         "Your price must be bigger than the total of highest price and price step"
       );
@@ -321,7 +302,6 @@ const RoomDetail = () => {
             {!disbleInput ? (
               !state?.isView ? (
                 <div style={{ width: "100%" }}>
-                  {error}
                   <input
                     style={{
                       width: "100%",
@@ -342,7 +322,9 @@ const RoomDetail = () => {
                       fontWeight: 600,
                       fontSize: "1.25rem",
                       border: "none",
+                      backgroundColor: "blueviolet",
                     }}
+                    className={styles["bet"]}
                     onClick={
                       user.phoneNumber
                         ? handleOnBid
@@ -414,6 +396,7 @@ const RoomDetail = () => {
           </div>
         </div>
       </div>
+      <Toast message={errorMessage} />
     </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./messageBox.module.css";
 import { socket } from "../../socket";
 import { useSelector } from "react-redux";
+import Toast from "../toast";
 const MessageBox = () => {
   const [message, setMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -10,36 +11,16 @@ const MessageBox = () => {
     setMessage(message);
   };
   const user = useSelector((state) => state.login);
-  console.log("USER", user);
   const handleChat = () => {
     socket.emit("chat message", {
       message: message,
       user: { name: user.firstName },
     });
   };
-  const error = errorMessage && (
-    <div
-      style={{
-        position: "fixed",
-        bottom: "55px",
-        width: "25%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontFamily: "Nunito",
-      }}
-    >
-      <i
-        className="fa fa-exclamation-circle"
-        aria-hidden="true"
-        style={{ color: "red" }}
-      ></i>
-      <span style={{ color: "red", fontWeight: "600" }}> {errorMessage}</span>
-    </div>
-  );
+
   return (
     <>
-      {error}
+      <Toast message={errorMessage} />
       <div className={styles["message-box"]}>
         <input
           placeholder="Enter your message..."

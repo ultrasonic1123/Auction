@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, generatePath } from "react-router-dom";
 import { convertToBase64 } from "../../ultilities/convertBase64";
+import { useSelector } from "react-redux";
 import styles from "./auctionRoom.module.css";
+import Toast from "../toast";
 const AuctionRoom = ({ data, isEdit, allowView, isVictoryRoom }) => {
+  const user = useSelector((state) => state.login);
   const navigator = useNavigate();
   const base64Image = convertToBase64(data.image.data.data);
-  console.log({ base64Image });
+  const [errMessage, setErrMessage] = useState("");
+  console.log("check", user, data);
+  const isBannedUser = () => {
+    if (user.phoneNumber && data.bannedUsers.includes(user.phoneNumber)) {
+      setErrMessage("You are banned from this room, try to join another.");
+      setTimeout(() => {
+        setErrMessage("");
+      }, 3000);
+      return true;
+    }
+    return false;
+  };
+
   return (
     <>
+      <Toast message={errMessage} />
       <div
         style={{
           marginLeft: "20px",
@@ -100,6 +116,7 @@ const AuctionRoom = ({ data, isEdit, allowView, isVictoryRoom }) => {
               opacity: 0.9,
             }}
             onClick={() => {
+              if (isBannedUser()) return;
               navigator(
                 !isEdit
                   ? generatePath("/room/:id", {
