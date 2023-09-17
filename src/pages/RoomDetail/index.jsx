@@ -200,17 +200,6 @@ const RoomDetail = () => {
                     />
                   );
                 })
-              : state.data?.history?.length
-              ? state.data.history.map((item, index) => {
-                  let isHighest = index === 0;
-                  return (
-                    <UserCost
-                      isHighest={isHighest}
-                      userName={item.user ?? "anonymous"}
-                      price={item.price}
-                    />
-                  );
-                })
               : bidHistory.map((item, index) => {
                   let isHighest = index === 0;
                   return (
@@ -371,19 +360,35 @@ const RoomDetail = () => {
                   </button>
                 </div>
               ) : (
-                <div style={{ width: "100%" }}>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
                   <h4>Winner's name:</h4>
-                  <span>{state?.data?.history[0]?.user ?? ""}</span>
+                  <span>{bidHistory[0].user ?? ""}</span>
                   <h4>Winner's phone number:</h4>
-                  <span>{state?.data?.history[0]?.phoneNumber ?? ""}</span>
+                  <span>{bidHistory[0].phoneNumber ?? ""}</span>
                 </div>
               )
             ) : (
-              <div style={{ width: "100%" }}>
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
                 <h4>Winner's name:</h4>
-                <span>{state?.data?.history[0]?.user ?? ""}</span>
+                <span>{bidHistory[0].user ?? ""}</span>
                 <h4>Winner's phone number:</h4>
-                <span>{state?.data?.history[0]?.phoneNumber ?? ""}</span>
+                <span>{bidHistory[0].phoneNumber ?? ""}</span>
               </div>
             )}
           </div>

@@ -7,13 +7,14 @@ import Loader from "../../components/loader";
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 import { useLocation } from "react-router-dom";
 import { convertToBase64 } from "../../ultilities/convertBase64";
+import { useNavigate } from "react-router-dom";
 const CreateNewRoom = () => {
+  const navigator = useNavigate();
   const [previewImage, setPreviewImage] = useState("");
   const [file, setFile] = useState("");
   const { state } = useLocation();
   const base64Image = convertToBase64(state?.data?.image?.data?.data);
   const isEdit = state?.isEdit;
-  console.log("isEdit", isEdit);
   const user = useSelector((state) => state.login);
   const [roomData, setRoomData] = useState(
     state?.data ?? {
@@ -152,7 +153,6 @@ const CreateNewRoom = () => {
         }
       );
       const newRoom = await result.json();
-      console.log("newRoom", newRoom);
       if (newRoom.status == "active" && !newRoom.startAt) {
         const updatedStartAt = await fetch(
           `${SERVER_URL}/user/update-start-at`,
@@ -183,6 +183,9 @@ const CreateNewRoom = () => {
       }
 
       setIsLoading(false);
+      if (newRoom) {
+        navigator("/auction-room-history");
+      }
     } catch (e) {
       console.log("Something went wrong!", e);
       setIsLoading(false);
